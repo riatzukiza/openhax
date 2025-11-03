@@ -1,0 +1,24 @@
+{
+  "name": "openhax",
+  "version": "0.1.0",
+  "description": "Opencode Reactant - Event-Driven GitHub + Worktrees + PR Agents",
+  "private": true,
+  "license": "GPL-3.0-only",
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "services/*",
+    "shared/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"pnpm --filter agentd dev\" \"pnpm --filter opencode-reactant dev\"",
+    "build": "pnpm --filter opencode-reactant build && pnpm --filter agentd build",
+    "start": "pnpm --filter agentd start",
+    "clean": "pnpm --recursive clean",
+    "install:all": "pnpm install && pnpm --recursive install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "packageManager": "pnpm@8.15.0"
+}
