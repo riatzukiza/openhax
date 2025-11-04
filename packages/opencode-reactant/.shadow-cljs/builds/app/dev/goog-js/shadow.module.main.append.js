@@ -1,1 +1,0 @@
-["^ ","~:resource-id",["~:shadow.build.modules/append","~:main"],"~:source","\ntry { opencode.ui.core.init(); } catch (e) { console.error(\"An error occurred when calling (opencode.ui.core/init)\"); console.error(e); }","~:js","\ntry { opencode.ui.core.init(); } catch (e) { console.error(\"An error occurred when calling (opencode.ui.core/init)\"); console.error(e); }"]
