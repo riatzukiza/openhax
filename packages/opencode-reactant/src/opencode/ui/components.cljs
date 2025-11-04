@@ -104,7 +104,7 @@
           [:div.text-3xl.mb-3 "📝"]
           [:p.text-gray-600.font-medium "No events yet."]
           [:p.text-sm.text-gray-400.mt-2 "Events will appear here as you interact with the application."]])]]
-     :max-height "300px"])
+     :max-height "300px"]))
 
 (defn issues-section [issues]
   [scrolling-container "Issues"
@@ -141,6 +141,7 @@
 
 (defn main-layout [issues prs worktrees worktree-config connected? repo]
   [:div.h-screen.bg-gray-50.flex.flex-col.overflow-hidden
+   ;; header
    [:header.bg-white.shadow-sm.border-b.border-gray-200.flex-shrink-0
     [:div.max-w-7xl.mx-auto.px-4.py-6
      [:div.flex.items-center.justify-between
@@ -150,12 +151,14 @@
         [:span.text-sm.text-gray-600 (str "Repo: " repo)]
         [:div.flex.items-center.gap-2
          [:div.w-2.h-2.rounded-full {:class (if connected? "bg-green-500" "bg-red-500")}]
-         [:span.text-sm.font-medium (if connected? "text-green-600" "text-red-600")
-          (if connected? "Connected" "Disconnected")]]]]]
+         [:span.text-sm.font-medium (if connected? "text-green-600" "text-red-600")]
+         [:span (if connected? "Connected" "Disconnected")]]]]]]]
+   ;; main
    [:main.max-w-7xl.mx-auto.px-4.py-6.flex-1.overflow-hidden.flex.flex-col
     [:div.flex-1.grid.grid-cols-1.lg:grid-cols-2.gap-6.min-h-0.overflow-hidden
      [issues-section issues]
      [prs-section prs]]
     [:div.grid.grid-cols-1.gap-6.mt-6
      [worktrees-section worktrees worktree-config]
-     [events-log]]]])
+     [events-log]]]]
+)
