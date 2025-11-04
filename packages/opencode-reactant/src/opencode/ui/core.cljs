@@ -21,16 +21,16 @@
 (defn issue-item [issue]
   ;; Handle both JS objects and Clojure maps
   (let [number (if (map? issue)
-                 (:number issue)
+                 (or (:number issue) (get issue "number"))
                  (.-number issue))
         title (if (map? issue)
-                (:title issue)
+                (or (:title issue) (get issue "title"))
                 (.-title issue))
         state (if (map? issue)
-                (:state issue)
+                (or (:state issue) (get issue "state"))
                 (.-state issue))
         id (if (map? issue)
-             (:id issue)
+             (or (:id issue) (get issue "id"))
              (.-id issue))]
     [:div.bg-white.border.border-gray-200.p-4.rounded-lg.mb-3.shadow-sm.hover:shadow-md.hover:bg-gray-50.transition-all
      {:key (str "issue-" id)}
@@ -47,18 +47,19 @@
        {:on-click #(gh/open-pr! number)} "Open PR"]]]))
 
 (defn pr-item [pr]
+  
   ;; Handle both JS objects and Clojure maps
   (let [number (if (map? pr)
-                 (:number pr)
+                 (or (:number pr) (get pr "number"))
                  (.-number pr))
         title (if (map? pr)
-                (:title pr)
+                (or (:title pr) (get pr "title"))
                 (.-title pr))
         state (if (map? pr)
-                (:state pr)
+                (or (:state pr) (get pr "state"))
                 (.-state pr))
         id (if (map? pr)
-             (:id pr)
+             (or (:id pr) (get pr "id"))
              (.-id pr))]
     [:div.bg-white.border.border-gray-200.p-4.rounded-lg.mb-3.shadow-sm.hover:shadow-md.hover:bg-gray-50.transition-all
      {:key (str "pr-" id)}
@@ -73,9 +74,10 @@
      [:div.text-lg.font-semibold.text-gray-900 title]]))
 
 (defn worktree-item [worktree]
-  (let [issue (:issue worktree)
-        branch (:branch worktree)
-        path (:path worktree)
+  
+  (let [issue (or (:issue worktree) (get worktree "issue"))
+        branch (or (:branch worktree) (get worktree "branch"))
+        path (or (:path worktree) (get worktree "path"))
         id (str "worktree-" issue)]
     [:div.bg-white.border.border-gray-200.p-4.rounded-lg.mb-3.shadow-sm.hover:shadow-md.hover:bg-gray-50.transition-all
      {:key id}
@@ -123,8 +125,8 @@
     (js/console.log "APP RENDER - seq worktrees:" (seq worktrees))
     (js/console.log "APP RENDER - issues first item:" (first issues))
     (js/console.log "APP RENDER - prs first item:" (first prs))
-    [:div.min-h-screen.bg-gray-50
-     [:header.bg-white.shadow-sm.border-b.border-gray-200
+    [:div.h-screen.bg-gray-50.flex.flex-col
+     [:header.bg-white.shadow-sm.border-b.border-gray-200.flex-shrink-0
       [:div.max-w-7xl.mx-auto.px-4.py-6
        [:div.flex.items-center.justify-between
         [:div
@@ -134,39 +136,42 @@
           [:div.flex.items-center.gap-2
            [:div.w-2.h-2.rounded-full {:class (if connected? "bg-green-500" "bg-red-500")}]
            [:span.text-sm.font-medium (if connected? "text-green-600" "text-red-600")
-            (if connected? "Connected" "Disconnected")]]]]]]]
-     [:main.max-w-7xl.mx-auto.px-4.py-8
-       [:div.grid.grid-cols-1.lg:grid-cols-2.gap-8
-        [:div
-         [:h2.text-xl.font-bold.text-gray-900.mb-4 "Issues"]
-         (if (seq issues)
-           (for [i issues] ^{:key (:id i)} [issue-item i])
-           [:div.bg-white.border.border-gray-200.rounded-lg.p-8.text-center.shadow-sm
-            [:div.text-4xl.mb-3 "📋"]
-            [:p.text-gray-600.font-medium "No issues loaded."]
-            [:p.text-sm.text-gray-400.mt-2 "Issues will appear here once connected to GitHub."]])]
-        [:div
-         [:h2.text-xl.font-bold.text-gray-900.mb-4 "Pull Requests"]
+            (if connected? "Connected" "Disconnected")]]]]]]
+     [:main.max-w-7xl.mx-auto.px-4.py-8.flex-1.overflow-hidden
+       [:div.h-full.grid.grid-cols-1.lg:grid-cols-2.gap-8
+        [:div.flex.flex-col
+         [:h2.text-xl.font-bold.text-gray-900.mb-4.flex-shrink-0 "Issues"]
+         [:div.flex-1.overflow-y-auto.px-1
+          (if (seq issues)
+            (for [i issues] ^{:key (:id i)} [issue-item i])
+            [:div.bg-white.border.border-gray-200.rounded-lg.p-8.text-center.shadow-sm
+             [:div.text-4xl.mb-3 "📋"]
+             [:p.text-gray-600.font-medium "No issues loaded."]
+             [:p.text-sm.text-gray-400.mt-2 "Issues will appear here once connected to GitHub."]])]]
+        [:div.flex.flex-col
+         [:h2.text-xl.font-bold.text-gray-900.mb-4.flex-shrink-0 "Pull Requests"]
+         [:div.flex-1.overflow-y-auto.px-1
           (if (and prs (pos? (count prs)))
             (for [p prs] ^{:key (:id p)} [pr-item p])
             [:div.bg-white.border.border-gray-200.rounded-lg.p-8.text-center.shadow-sm
              [:div.text-4xl.mb-3 "🔄"]
              [:p.text-gray-600.font-medium "No PRs loaded."]
-             [:p.text-sm.text-gray-400.mt-2 "Pull requests will appear here once connected to GitHub."]])]]
-[:div.mt-8
-          [:div.flex.items-center.justify-between.mb-4
-           [:h2.text-xl.font-bold.text-gray-900 "Worktrees"]
-           [:div.flex.items-center.gap-2
-            [:span.text-sm.text-gray-600 "Base folder:"]
-            [:span.px-2.py-1.bg-blue-100.text-blue-800.text-xs.font-medium.rounded-full
-             (:baseDir worktree-config)]]]
-          (if (and worktrees (pos? (count worktrees)))
-            (for [w worktrees] ^{:key (:issue w)} [worktree-item w])
-            [:div.bg-white.border.border-gray-200.rounded-lg.p-8.text-center.shadow-sm
-             [:div.text-4xl.mb-3 "🌳"]
-             [:p.text-gray-600.font-medium "No worktrees created."]
-             [:p.text-sm.text-gray-400.mt-2 "Worktrees will appear here when you create them for issues."]])]
-      [events-log]]]))
+             [:p.text-sm.text-gray-400.mt-2 "Pull requests will appear here once connected to GitHub."]])]]]
+       [:div.mt-8.flex.flex-col.flex-shrink-0
+        [:div.flex.items-center.justify-between.mb-4
+         [:h2.text-xl.font-bold.text-gray-900 "Worktrees"]
+         [:div.flex.items-center.gap-2
+          [:span.text-sm.text-gray-600 "Base folder:"]
+          [:span.px-2.py-1.bg-blue-100.text-blue-800.text-xs.font-medium.rounded-full
+           (:baseDir worktree-config)]]]
+        [:div.max-h-48.overflow-y-auto.px-1
+         (if (and worktrees (pos? (count worktrees)))
+           (for [w worktrees] ^{:key (:issue w)} [worktree-item w])
+           [:div.bg-white.border.border-gray-200.rounded-lg.p-8.text-center.shadow-sm
+            [:div.text-4xl.mb-3 "🌳"]
+            [:p.text-gray-600.font-medium "No worktrees created."]
+            [:p.text-sm.text-gray-400.mt-2 "Worktrees will appear here when you create them for issues."])]]]
+       [events-log]]]))
 
 (defn init []
   (js/console.log "Initializing app v3...")
