@@ -1,16 +1,18 @@
 import "dotenv/config";
 import Fastify from "fastify";
 import websocket from "@fastify/websocket";
+import cors from "@fastify/cors";
 import { WebSocket } from "ws";
 import { FastifyRequest } from "fastify";
 import { bus } from "./events.js";
 import { listIssues, listPRs, openPR, commentPR } from "./github.js";
-import { createWorktree, runTaskInWorktree, pushBranch } from "./git.js";
+import { getRepoInfo, getWorktreeConfig, createWorktree, runTaskInWorktree, pushBranch, listWorktrees } from "./git.js";
 
 const PORT = Number(process.env.WEB_PORT ?? 8787);
 const REPO = process.env.REPO_SLUG!;
 
 const app = Fastify();
+await app.register(cors);
 await app.register(websocket);
 
 app.get("/events", { websocket: true }, (socket: WebSocket, req: FastifyRequest) => {
@@ -23,15 +25,27 @@ app.get("/api/issues", async (req, rep) => {
   return listIssues(repo);
 });
 
+app.get("/api/repo", async (req, rep) => {
+  return getRepoInfo();
+});
+
 app.get("/api/prs", async (req, rep) => {
   const repo = (req.query as any).repo ?? REPO;
   return listPRs(repo);
 });
 
+app.get("/api/worktrees", async (req, rep) => {
+  return listWorktrees();
+});
+
+app.get("/api/worktrees/config", async (req, rep) => {
+  return getWorktreeConfig();
+});
+
 app.post("/api/worktrees", async (req, rep) => {
   const { repo = REPO, issue } = (req.body as any);
   const { branch, path } = await createWorktree(issue);
-  await runTaskInWorktree(path, `pnpm opencode run "Issue #${issue}" || true`);
+  // await runTaskInWorktree(path, `pnpm opencode run "Issue #${issue}" || true`);
   return { branch, path, issue };
 });
 

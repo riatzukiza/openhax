@@ -7,4 +7,5 @@
         :asset-path "/js"
         :modules {:main {:init-fn opencode.ui.core/init}}
         :devtools {:http-root "resources/public"
-                   :http-port 8700}}}}
+                   :http-port 8700}
+        :closure-defines {opencode.ui.state/REPO_SLUG #shadow/env "REPO_SLUG"}}}}

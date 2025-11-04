@@ -1,0 +1,15 @@
+{
+  "mcp":{
+    // "clj": {
+    //   "type": "local",
+    //   "command": ["clojure", "-X:mcp-shadow-dual"],
+    //   "enabled": true
+    // }
+  },
+  "lsp":{
+    "clojure":{
+      "command":["clojure-lsp", "listen"],
+      "extensions":[".clj", ".cljs", ".cljc", ".edn"],
+    }
+  }
+}

@@ -4,3 +4,14 @@ dist/
 .env
 .DS_Store
 .worktrees/.shadow-cljs/
+
+# Shadow-CLJS build artifacts
+.shadow-cljs/
+packages/*/.shadow-cljs/
+packages/*/resources/public/js/cljs-runtime/
+packages/*/resources/public/js/main.js
+packages/*/resources/public/js/manifest.edn
+
+packages/opencode-reactant/resources/
+
+.envrc
