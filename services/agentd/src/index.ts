@@ -2,6 +2,7 @@ import "dotenv/config";
 import Fastify from "fastify";
 import websocket from "@fastify/websocket";
 import { WebSocket } from "ws";
+import { FastifyRequest } from "fastify";
 import { bus } from "./events.js";
 import { listIssues, listPRs, openPR, commentPR } from "./github.js";
 import { createWorktree, runTaskInWorktree, pushBranch } from "./git.js";
@@ -12,10 +13,9 @@ const REPO = process.env.REPO_SLUG!;
 const app = Fastify();
 await app.register(websocket);
 
-app.get("/events", { websocket: true }, (conn) => {
-  const ws = conn.socket as WebSocket;
-  bus.attach(ws);
-  ws.on("close", () => bus.detach(ws));
+app.get("/events", { websocket: true }, (socket: WebSocket, req: FastifyRequest) => {
+  bus.attach(socket);
+  socket.on("close", () => bus.detach(socket));
 });
 
 app.get("/api/issues", async (req, rep) => {

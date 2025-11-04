@@ -1,7 +1,6 @@
 {:source-paths ["src"]
  :dependencies [[reagent "1.2.0"]
-                [cljs-ajax "0.8.4"]
-                [org.clojure/core.async "1.6.673"]]
+                [cljs-ajax "0.8.4"]]
  :builds
  {:app {:target :browser
         :output-dir "resources/public/js"
