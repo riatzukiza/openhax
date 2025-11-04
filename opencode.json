@@ -8,7 +8,7 @@
     },
     "clj": {
       "type": "local",
-      "command": ["clojure", "-X:mcp"],
+      "command": ["clojure", "-X:mcp", ":port","7890"],
       "enabled": true
     },
     "clj-kondo": {

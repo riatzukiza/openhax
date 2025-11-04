@@ -12,7 +12,6 @@
         :devtools {:http-root "resources/public"
                    :http-port 8700
                    :shadow-port 7890
-
                    :hud {:errors :warnings :progress}
                    :autoload true
                    :preloads [devtools.preload]}
