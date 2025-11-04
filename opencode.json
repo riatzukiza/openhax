@@ -6,10 +6,22 @@
       "url":"http://localhost:4320/github",
       "enabled": true
     },
+    "clojure-centralized":{
+      "type":"local",
+      "command":["../../../mcp-server.sh", "unified", "7890"],
+      "enabled": true,
+      "description": "Centralized Clojure MCP server for all runtimes"
+    },
+    "clojure-reactant":{
+      "type":"local",
+      "command":["../../../mcp-server.sh", "cljs", "7892"],
+      "enabled": true,
+      "description": "Reactant ClojureScript development MCP server"
+    },
     "clj": {
       "type": "local",
       "command": ["clojure", "-X:mcp", ":port","7890"],
-      "enabled": true
+      "enabled": false
     },
     "clj-kondo": {
       "type": "local",
