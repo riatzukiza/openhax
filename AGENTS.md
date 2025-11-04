@@ -1,30 +1,26 @@
 
-## Dev servers ports
-- agentd:8787 
-- nREPL:45373
-- shadow-cljs-server:8630
-- reactant-frontend: 8700
+## Commands
+- `pnpm dev` - Start both frontend (8700) and backend (8787) in dev mode
+- `pnpm build` - Build both frontend and backend for production  
+- `pnpm start` - Start production backend server
+- `pnpm clean` - Clean all build artifacts
+- `cd packages/opencode-reactant && pnpm dev` - Frontend only
+- `cd services/agentd && pnpm dev` - Backend only
+- `npx shadow-cljs compile app` - Compile ClojureScript
+- `npx shadow-cljs release app` - Production frontend build
 
-## Reactant development
-- The page will initially show no data, give it at least 1000ms
-- the page automatically reloads when you change code, you don't have to refresh it
+## Code Style
+- **TypeScript**: ES modules, camelCase functions, async/await, Zod validation, Fastify server
+- **ClojureScript**: Reagent components, kebab-case functions, atoms for state, Tailwind CSS
+- **Imports**: Use ES6 imports, no default exports, explicit file extensions (.js)
+- **Types**: Strict TypeScript enabled, avoid `any`, use Zod schemas
+- **Naming**: camelCase for TS, kebab-case for CLJS, descriptive variable names
+- **Error handling**: Try/catch only when necessary, proper error logging via bus events
+- **Formatting**: Consistent indentation, no unnecessary destructuring, single-responsibility functions
 
-## Databases
-- redis
-- mongo
-- chroma
-- lmdb
-
-## Promethean Ecosystem
-
-The promethean ecosystem is at your disposal. Packages from this framework include:
-- @promethean-os/lmdb-cache a simple native kv cache using LMDB
-- @promethean-os/persistence Exposes a context store system which can be used for advanced RAG
-- @promethean-os/pantheon an agentic AI framework
-- @promethean-os/utils A collection of commonly used tools
-- @promethean-os/fs file system tools
-
-And many more.
-You can find documentation for these tools at [riatzukiza/promethean](https://github.com/riatzukiza/promethean) using
-gh_grep
+## Architecture
+- Event-driven with WebSocket communication between frontend/backend
+- GitHub API via Octokit, Git operations via simple-git
+- Frontend: Reagent + Shadow-CLJS, Backend: Fastify + TypeScript
+- State management: atoms in ClojureScript, event bus in TypeScript
 

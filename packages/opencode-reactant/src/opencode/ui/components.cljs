@@ -76,17 +76,25 @@
        [:button.bg-red-500.hover:bg-red-600.text-white.px-3.py-1.5.rounded-md.text-sm.font-medium.transition-colors.focus:outline-none.focus:ring-2.focus:ring-red-500.focus:ring-offset-2
         {:on-click #(js/alert (str "Remove worktree for issue #" issue))} "Remove"]]]))
 
+(defn scrolling-container [title content & {:keys [max-height class extra-header-content]}]
+  [:div.flex.flex-col.h-full
+   [:div.flex.items-center.justify-between.mb-4.flex-shrink-0
+    [:h2.text-xl.font-bold.text-gray-900 title]
+    (when extra-header-content extra-header-content)]
+   [:div.flex-1.overflow-y-auto.px-1.min-h-0
+    {:class (or class "")
+     :style (when max-height {:max-height max-height})}
+    content]])
+
 (defn events-log []
   (let [evts (reverse (:events @S/!state))]
-    [:div.mt-8
-     [:h2.text-xl.font-bold.text-gray-900.mb-4 "Events"]
-     [:div.bg-white.border.border-gray-200.rounded-lg.shadow-sm
-      {:class ["overflow-hidden"]}
+    [scrolling-container "Events"
+     [:div.bg-white.border.border-gray-200.rounded-lg.shadow-sm.overflow-hidden
       [:div.bg-gray-50.px-4.py-3.border-b.border-gray-200
        [:div.flex.items-center.justify-between
         [:span.text-sm.font-medium.text-gray-700 "Event Log"]
         [:span.text-xs.text-gray-500 (str (count evts) " events")]]]
-      [:div {:style {:max-height "300px" :overflow "auto"}}
+      [:div
        (if (seq evts)
          (for [[i e] (map-indexed vector evts)]
            ^{:key i}
@@ -95,48 +103,44 @@
          [:div.p-8.text-center
           [:div.text-3xl.mb-3 "📝"]
           [:p.text-gray-600.font-medium "No events yet."]
-          [:p.text-sm.text-gray-400.mt-2 "Events will appear here as you interact with the application."]])]]]))
+          [:p.text-sm.text-gray-400.mt-2 "Events will appear here as you interact with the application."]])]]
+     :max-height "300px"])
 
 (defn issues-section [issues]
-  [:div.flex.flex-col
-   [:h2.text-xl.font-bold.text-gray-900.mb-4.flex-shrink-0 "Issues"]
-   [:div.flex-1.overflow-y-auto.px-1
-    (if (seq issues)
-      (for [i issues] ^{:key (:id i)} [issue-item i])
-      [:div.bg-white.border.border-gray-200.rounded-lg.p-8.text-center.shadow-sm
-       [:div.text-4xl.mb-3 "📋"]
-       [:p.text-gray-600.font-medium "No issues loaded."]
-       [:p.text-sm.text-gray-400.mt-2 "Issues will appear here once connected to GitHub."]])]])
+  [scrolling-container "Issues"
+   (if (seq issues)
+     (for [i issues] ^{:key (:id i)} [issue-item i])
+     [:div.bg-white.border.border-gray-200.rounded-lg.p-8.text-center.shadow-sm
+      [:div.text-4xl.mb-3 "📋"]
+      [:p.text-gray-600.font-medium "No issues loaded."]
+      [:p.text-sm.text-gray-400.mt-2 "Issues will appear here once connected to GitHub."]])])
 
 (defn prs-section [prs]
-  [:div.flex.flex-col
-   [:h2.text-xl.font-bold.text-gray-900.mb-4.flex-shrink-0 "Pull Requests"]
-   [:div.flex-1.overflow-y-auto.px-1
-    (if (and prs (pos? (count prs)))
-      (for [p prs] ^{:key (:id p)} [pr-item p])
-      [:div.bg-white.border.border-gray-200.rounded-lg.p-8.text-center.shadow-sm
-       [:div.text-4xl.mb-3 "🔄"]
-       [:p.text-gray-600.font-medium "No PRs loaded."]
-       [:p.text-sm.text-gray-400.mt-2 "Pull requests will appear here once connected to GitHub."]])]])
+  [scrolling-container "Pull Requests"
+   (if (and prs (pos? (count prs)))
+     (for [p prs] ^{:key (:id p)} [pr-item p])
+     [:div.bg-white.border.border-gray-200.rounded-lg.p-8.text-center.shadow-sm
+      [:div.text-4xl.mb-3 "🔄"]
+      [:p.text-gray-600.font-medium "No PRs loaded."]
+      [:p.text-sm.text-gray-400.mt-2 "Pull requests will appear here once connected to GitHub."]])])
 
 (defn worktrees-section [worktrees worktree-config]
-  [:div.mt-8.flex.flex-col.flex-shrink-0
-   [:div.flex.items-center.justify-between.mb-4
-    [:h2.text-xl.font-bold.text-gray-900 "Worktrees"]
-    [:div.flex.items-center.gap-2
-     [:span.text-sm.text-gray-600 "Base folder:"]
-     [:span.px-2.py-1.bg-blue-100.text-blue-800.text-xs.font-medium.rounded-full
-      (:baseDir worktree-config)]]]
-   [:div.max-h-48.overflow-y-auto.px-1
+  [:div.mt-8
+   [scrolling-container "Worktrees"
     (if (and worktrees (pos? (count worktrees)))
       (for [w worktrees] ^{:key (:issue w)} [worktree-item w])
       [:div.bg-white.border.border-gray-200.rounded-lg.p-8.text-center.shadow-sm
        [:div.text-4xl.mb-3 "🌳"]
        [:p.text-gray-600.font-medium "No worktrees created."]
-       [:p.text-sm.text-gray-400.mt-2 "Worktrees will appear here when you create them for issues."]])]])
+       [:p.text-sm.text-gray-400.mt-2 "Worktrees will appear here when you create them for issues."]])
+    :extra-header-content [:div.flex.items-center.gap-2
+                           [:span.text-sm.text-gray-600 "Base folder:"]
+                           [:span.px-2.py-1.bg-blue-100.text-blue-800.text-xs.font-medium.rounded-full
+                            (:baseDir worktree-config)]]
+    :max-height "12rem"]])
 
 (defn main-layout [issues prs worktrees worktree-config connected? repo]
-  [:div.h-screen.bg-gray-50.flex.flex-col
+  [:div.h-screen.bg-gray-50.flex.flex-col.overflow-hidden
    [:header.bg-white.shadow-sm.border-b.border-gray-200.flex-shrink-0
     [:div.max-w-7xl.mx-auto.px-4.py-6
      [:div.flex.items-center.justify-between
@@ -147,10 +151,11 @@
         [:div.flex.items-center.gap-2
          [:div.w-2.h-2.rounded-full {:class (if connected? "bg-green-500" "bg-red-500")}]
          [:span.text-sm.font-medium (if connected? "text-green-600" "text-red-600")
-          (if connected? "Connected" "Disconnected")]]]]]]
-   [:main.max-w-7xl.mx-auto.px-4.py-8.flex-1.overflow-hidden
-    [:div.h-full.grid.grid-cols-1.lg:grid-cols-2.gap-8
+          (if connected? "Connected" "Disconnected")]]]]]
+   [:main.max-w-7xl.mx-auto.px-4.py-6.flex-1.overflow-hidden.flex.flex-col
+    [:div.flex-1.grid.grid-cols-1.lg:grid-cols-2.gap-6.min-h-0.overflow-hidden
      [issues-section issues]
      [prs-section prs]]
-    [worktrees-section worktrees worktree-config]
-    [events-log]]])
+    [:div.grid.grid-cols-1.gap-6.mt-6
+     [worktrees-section worktrees worktree-config]
+     [events-log]]]])
