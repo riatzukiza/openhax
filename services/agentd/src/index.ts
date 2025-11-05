@@ -5,7 +5,7 @@ import cors from "@fastify/cors";
 import { WebSocket } from "ws";
 import { FastifyRequest } from "fastify";
 import { bus } from "./events.js";
-import { listIssues, listPRs, openPR, commentPR } from "./github.js";
+import { listIssues, listPRs, openPR, commentPR, getIssueDetail, getPRDetail } from "./github.js";
 import { getRepoInfo, getWorktreeConfig, createWorktree, runTaskInWorktree, pushBranch, listWorktrees } from "./git.js";
 
 const PORT = Number(process.env.WEB_PORT ?? 8787);
@@ -25,6 +25,12 @@ app.get("/api/issues", async (req, rep) => {
   return listIssues(repo);
 });
 
+app.get("/api/issues/:id", async (req, rep) => {
+  const repo = (req.query as any).repo ?? REPO;
+  const id = Number((req.params as any).id);
+  return getIssueDetail(repo, id);
+});
+
 app.get("/api/repo", async (req, rep) => {
   return getRepoInfo();
 });
@@ -32,6 +38,12 @@ app.get("/api/repo", async (req, rep) => {
 app.get("/api/prs", async (req, rep) => {
   const repo = (req.query as any).repo ?? REPO;
   return listPRs(repo);
+});
+
+app.get("/api/prs/:id", async (req, rep) => {
+  const repo = (req.query as any).repo ?? REPO;
+  const id = Number((req.params as any).id);
+  return getPRDetail(repo, id);
 });
 
 app.get("/api/worktrees", async (req, rep) => {

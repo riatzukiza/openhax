@@ -1,7 +1,12 @@
 {:source-paths ["src"]
  :dependencies [[reagent           "1.2.0"]
-                [cljs-ajax         "0.8.4"]
-                [binaryage/devtools "1.0.7"]]
+                 [cljs-ajax         "0.8.4"]
+                 [binaryage/devtools "1.0.7"]
+                 [metosin/reitit    "0.7.0"]
+                 [metosin/reitit-frontend "0.7.0"]]
+
+ :nrepl {:port 7002
+          :host "127.0.0.1"}
 
  :builds
  {:app
@@ -19,7 +24,4 @@
                       :autoload    true
                       :preloads    [devtools.preload]}
    :build-hooks      [(shadow.cljs.build-report/hook {:output-to "target/build-report.html"})]
-   :nrepl {:port 7002
-            :host "127.0.0.1"}  ; optional: defaults to localhost
-    ;; … rest of config …
    :closure-defines  {opencode.ui.state/REPO_SLUG #shadow/env "REPO_SLUG"}}}}

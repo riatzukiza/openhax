@@ -24,3 +24,18 @@
 - Frontend: Reagent + Shadow-CLJS, Backend: Fastify + TypeScript
 - State management: atoms in ClojureScript, event bus in TypeScript
 
+### 🔗 Cross-Repository Integration
+- **[CROSS_REFERENCES.md](./CROSS_REFERENCES.md)** - Complete cross-references to all related repositories
+- **[Workspace AGENTS.md](../../AGENTS.md)** - Main workspace documentation
+- **[Repository Index](../../REPOSITORY_INDEX.md)** - Complete repository overview
+
+### Related Repositories
+- **[promethean](../../promethean/)**: Agent orchestration and AI enhancement
+- **[agent-shell](../../agent-shell/)**: Development workflow and agent integration
+- **[opencode-openai-codex-auth](../../opencode-openai-codex-auth/)**: Authentication patterns
+- **[moofone/codex-ts-sdk](../../moofone/codex-ts-sdk/)**: TypeScript SDK integration
+- **[stt](../../stt/)**: Web development patterns and components
+- **[opencode-hub](../../opencode-hub/)**: Package management and distribution
+- **[clojure-mcp](../../clojure-mcp/)**: ClojureScript development patterns
+- **[dotfiles](../../dotfiles/)**: Development environment setup
+

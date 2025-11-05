@@ -1,6 +1,11 @@
 (ns opencode.ui.github
-  (:require [ajax.core :refer [GET POST]]
+  (:require [reagent.core :as r]
+            [ajax.core :refer [GET POST]]
             [opencode.ui.state :as S]))
+
+;; Cache atoms for issue and PR details
+(defonce issue-detail-cache (r/atom {}))
+(defonce pr-detail-cache (r/atom {}))
 
 (def base "http://localhost:8787/api")
 
@@ -48,8 +53,6 @@
                        (js/console.log "PRs count:" (count (get @S/!state :prs)))))
           :error-handler (fn [{:keys [status status-text]}]
                            (js/console.error "PR AJAX error:" status status-text))})))
-
-
 
 (defn fetch-worktrees! []
   (let [repo (:repo @S/!state)]
@@ -102,3 +105,57 @@
          :format :json
          :handler #(S/push-event! {:type :ui/command-ok :cmd :pr-comment :data %})
          :error-handler #(S/push-event! {:type :ui/command-error :cmd :pr-comment :err %})}))
+
+(defn fetch-issue-detail! [issue-id]
+  (let [repo (:repo @S/!state)
+        cache-key (str repo "/" issue-id)]
+    ;; Check cache first
+    (if-let [cached-result (get @issue-detail-cache cache-key)]
+      (do
+        (js/console.log "Using cached issue detail for:" cache-key)
+        cached-result)
+      ;; Fetch from API if not cached
+      (do
+        (js/console.log "Fetching issue detail for:" repo "issue:" issue-id "NEW CODE")
+        (GET (str base "/issues/" issue-id)
+             {:params {:repo repo}
+              :handler (fn [response]
+                          (let [clj-data (js->clj response :keywordize-keys true)
+                                ;; Convert array-based structure to proper map
+                                mapped-data (when (:arr clj-data)
+                                             (apply hash-map (:arr clj-data)))]
+                            (js/console.log "Issue detail response:" clj-data)
+                            (js/console.log "Mapped issue data:" mapped-data)
+                            ;; Cache the mapped data
+                            (swap! issue-detail-cache assoc cache-key mapped-data)
+                            mapped-data))
+              :error-handler (fn [{:keys [status status-text]}]
+                               (js/console.error "Issue detail fetch error:" status status-text)
+                               nil)})))))
+
+(defn fetch-pr-detail! [pr-id]
+  (let [repo (:repo @S/!state)
+        cache-key (str repo "/" pr-id)]
+    ;; Check cache first
+    (if-let [cached-result (get @pr-detail-cache cache-key)]
+      (do
+        (js/console.log "Using cached PR detail for:" cache-key)
+        cached-result)
+      ;; Fetch from API if not cached
+      (do
+        (js/console.log "Fetching PR detail for:" repo "PR:" pr-id)
+        (GET (str base "/prs/" pr-id)
+             {:params {:repo repo}
+              :handler (fn [response]
+                         (let [clj-data (js->clj response :keywordize-keys true)
+                               ;; Convert array-based structure to proper map
+                               mapped-data (when (:arr clj-data)
+                                            (apply hash-map (:arr clj-data)))]
+                           (js/console.log "PR detail response:" clj-data)
+                           (js/console.log "Mapped PR data:" mapped-data)
+                           ;; Cache the result
+                           (swap! pr-detail-cache assoc cache-key mapped-data)
+                           mapped-data))
+              :error-handler (fn [{:keys [status status-text]}]
+                               (js/console.error "PR detail fetch error:" status status-text)
+                               nil)})))))

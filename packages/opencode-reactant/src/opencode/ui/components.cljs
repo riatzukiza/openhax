@@ -1,7 +1,8 @@
 (ns opencode.ui.components
   (:require [reagent.core :as r]
             [opencode.ui.state :as S]
-            [opencode.ui.github :as gh]))
+            [opencode.ui.github :as gh]
+            [opencode.ui.router :as router]))
 
 (defn issue-item [issue]
   ;; Handle both JS objects and Clojure maps
@@ -17,19 +18,24 @@
         id (if (map? issue)
              (or (:id issue) (get issue "id"))
              (.-id issue))]
-    [:div.bg-white.border.border-gray-200.p-4.rounded-lg.mb-3.shadow-sm.hover:shadow-md.hover:bg-gray-50.transition-all
-     {:key (str "issue-" id)}
+    [:div.bg-white.border.border-gray-200.p-4.rounded-lg.mb-3.shadow-sm.hover:shadow-md.hover:bg-gray-50.transition-all.cursor-pointer
+     {:key (str "issue-" id)
+      :on-click #(router/navigate! ::router/issue (str number))}
       [:div.flex.items-center.justify-between.mb-2
        [:span.text-sm.font-medium.text-gray-500 (str "#" number)]
        [:span.px-2.py-1.text-xs.font-semibold.rounded-full
         {:class (if (= state "open") "bg-green-100.text-green-800" "bg-gray-100.text-gray-800")}
         state]]
-      [:div.text-lg.font-semibold.text-gray-900.mb-3 title]
+      [:div.text-lg.font-semibold.text-gray-900.mb-3.hover:text-blue-600.transition-colors title]
       [:div.flex.gap-2
        [:button.bg-blue-500.hover:bg-blue-600.text-white.px-3.py-1.5.rounded-md.text-sm.font-medium.transition-colors.focus:outline-none.focus:ring-2.focus:ring-blue-500.focus:ring-offset-2
-        {:on-click #(gh/create-worktree! number)} "Create worktree"]
+        {:on-click (fn [e] 
+                     (.stopPropagation e)
+                     (gh/create-worktree! number))} "Create worktree"]
        [:button.bg-gray-500.hover:bg-gray-600.text-white.px-3.py-1.5.rounded-md.text-sm.font-medium.transition-colors.focus:outline-none.focus:ring-2.focus:ring-gray-500.focus:ring-offset-2
-        {:on-click #(gh/open-pr! number)} "Open PR"]]]))
+        {:on-click (fn [e] 
+                     (.stopPropagation e)
+                     (gh/open-pr! number))} "Open PR"]]]))
 
 (defn pr-item [pr]
   ;; Handle both JS objects and Clojure maps
@@ -45,8 +51,9 @@
         id (if (map? pr)
              (or (:id pr) (get pr "id"))
              (.-id pr))]
-    [:div.bg-white.border.border-gray-200.p-4.rounded-lg.mb-3.shadow-sm.hover:shadow-md.hover:bg-gray-50.transition-all
-     {:key (str "pr-" id)}
+    [:div.bg-white.border.border-gray-200.p-4.rounded-lg.mb-3.shadow-sm.hover:shadow-md.hover:bg-gray-50.transition-all.cursor-pointer
+     {:key (str "pr-" id)
+      :on-click #(router/navigate! ::router/pr (str number))}
       [:div.flex.items-center.justify-between.mb-2
        [:span.text-sm.font-medium.text-gray-500 (str "PR #" number)]
        [:span.px-2.py-1.text-xs.font-semibold.rounded-full
@@ -54,8 +61,8 @@
                   (= state "open") "bg-green-100.text-green-800"
                   (= state "merged") "bg-purple-100.text-purple-800"
                   :else "bg-gray-100.text-gray-800")}
-        state]]
-      [:div.text-lg.font-semibold.text-gray-900 title]]))
+         state]]
+      [:div.text-lg.font-semibold.text-gray-900.hover:text-blue-600.transition-colors title]]))
 
 (defn worktree-item [worktree]
   (let [issue (or (:issue worktree) (get worktree "issue"))
@@ -77,7 +84,7 @@
         {:on-click #(js/alert (str "Remove worktree for issue #" issue))} "Remove"]]]))
 
 (defn scrolling-container [title content & {:keys [max-height class extra-header-content]}]
-  [:div.flex.flex-col.h-full
+  [:div.flex.flex-col.h-full.min-h-0
    [:div.flex.items-center.justify-between.mb-4.flex-shrink-0
     [:h2.text-xl.font-bold.text-gray-900 title]
     (when extra-header-content extra-header-content)]
@@ -107,32 +114,34 @@
      :max-height "300px"]))
 
 (defn issues-section [issues]
-  [scrolling-container "Issues"
-   (if (seq issues)
-     (for [i issues] ^{:key (:id i)} [issue-item i])
-     [:div.bg-white.border.border-gray-200.rounded-lg.p-8.text-center.shadow-sm
-      [:div.text-4xl.mb-3 "📋"]
-      [:p.text-gray-600.font-medium "No issues loaded."]
-      [:p.text-sm.text-gray-400.mt-2 "Issues will appear here once connected to GitHub."]])])
+  [:div.flex.flex-col.h-full.min-h-0
+   [scrolling-container "Issues"
+    (if (seq issues)
+      (for [i issues] ^{:key (:id i)} [issue-item i])
+      [:div.bg-white.border.border-gray-200.rounded-lg.p-8.text-center.shadow-sm
+       [:div.text-4xl.mb-3 "📋"]
+       [:p.text-gray-600.font-medium "No issues loaded."]
+       [:p.text-sm.text-gray-400.mt-2 "Issues will appear here once connected to GitHub."]])]])
 
 (defn prs-section [prs]
-  [scrolling-container "Pull Requests"
-   (if (and prs (pos? (count prs)))
-     (for [p prs] ^{:key (:id p)} [pr-item p])
-     [:div.bg-white.border.border-gray-200.rounded-lg.p-8.text-center.shadow-sm
-      [:div.text-4xl.mb-3 "🔄"]
-      [:p.text-gray-600.font-medium "No PRs loaded."]
-      [:p.text-sm.text-gray-400.mt-2 "Pull requests will appear here once connected to GitHub."]])])
+  [:div.flex.flex-col.h-full.min-h-0
+   [scrolling-container "Pull Requests"
+    (if (and prs (pos? (count prs)))
+      (for [p prs] ^{:key (:id p)} [pr-item p])
+      [:div.bg-white.border.border-gray-200.rounded-lg.p-8.text-center.shadow-sm
+       [:div.text-4xl.mb-3 "🔄"]
+       [:p.text-gray-600.font-medium "No PRs loaded."]
+       [:p.text-sm.text-gray-400.mt-2 "Pull requests will appear here once connected to GitHub."]])]])
 
 (defn worktrees-section [worktrees worktree-config]
-  [:div.mt-8
+  [:div.mt-8.flex.flex-col.min-h-0
    [scrolling-container "Worktrees"
     (if (and worktrees (pos? (count worktrees)))
       (for [w worktrees] ^{:key (:issue w)} [worktree-item w])
       [:div.bg-white.border.border-gray-200.rounded-lg.p-8.text-center.shadow-sm
        [:div.text-4xl.mb-3 "🌳"]
        [:p.text-gray-600.font-medium "No worktrees created."]
-       [:p.text-sm.text-gray-400.mt-2 "Worktrees will appear here when you create them for issues."]])
+       [:p.text-sm.text-gray-400.mt-2 "Worktrees will appear here when you create them for them."]])
     :extra-header-content [:div.flex.items-center.gap-2
                            [:span.text-sm.text-gray-600 "Base folder:"]
                            [:span.px-2.py-1.bg-blue-100.text-blue-800.text-xs.font-medium.rounded-full
@@ -158,7 +167,7 @@
     [:div.flex-1.grid.grid-cols-1.lg:grid-cols-2.gap-6.min-h-0.overflow-hidden
      [issues-section issues]
      [prs-section prs]]
-    [:div.grid.grid-cols-1.gap-6.mt-6
+    [:div.grid.grid-cols-1.gap-6.mt-6.flex-1.min-h-0
      [worktrees-section worktrees worktree-config]
      [events-log]]]]
 )
