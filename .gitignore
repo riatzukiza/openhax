@@ -15,3 +15,8 @@ packages/*/resources/public/js/manifest.edn
 packages/opencode-reactant/resources/
 
 .envrc
+
+# Tooling / cache
+.clj-kondo/
+.cpcache/
+.lsp/
