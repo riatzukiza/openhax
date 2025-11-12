@@ -1,22 +1,26 @@
-node_modules/
+# Build artifacts
 dist/
+build/
+lib/
+*.tsbuildinfo
+
+# Dependencies 
+node_modules/
 *.log
+*.pid
+*.seed
+*.pid.lock
+
+# Environment files
 .env
-.DS_Store
-.worktrees/.shadow-cljs/
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-# Shadow-CLJS build artifacts
-.shadow-cljs/
-packages/*/.shadow-cljs/
-packages/*/resources/public/js/cljs-runtime/
-packages/*/resources/public/js/main.js
-packages/*/resources/public/js/manifest.edn
-
-packages/opencode-reactant/resources/
-
-.envrc
-
-# Tooling / cache
-.clj-kondo/
-.cpcache/
-.lsp/
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
