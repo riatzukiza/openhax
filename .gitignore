@@ -16,4 +16,7 @@ packages/opencode-reactant/resources/
 
 .envrc
 
-.nx/
+# Tooling / cache
+.clj-kondo/
+.cpcache/
+.lsp/
