@@ -15,3 +15,5 @@ packages/*/resources/public/js/manifest.edn
 packages/opencode-reactant/resources/
 
 .envrc
+
+.nx/
