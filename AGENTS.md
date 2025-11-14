@@ -32,7 +32,7 @@
 ### Related Repositories
 - **[promethean](../../promethean/)**: Agent orchestration and AI enhancement
 - **[agent-shell](../../agent-shell/)**: Development workflow and agent integration
-- **[opencode-openai-codex-auth](../../opencode-openai-codex-auth/)**: Authentication patterns
+- **[open-hax/codex](../../open-hax/codex/)**: Authentication patterns
 - **[moofone/codex-ts-sdk](../../moofone/codex-ts-sdk/)**: TypeScript SDK integration
 - **[stt](../../stt/)**: Web development patterns and components
 - **[opencode-hub](../../opencode-hub/)**: Package management and distribution

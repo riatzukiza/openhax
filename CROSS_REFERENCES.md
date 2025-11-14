@@ -25,10 +25,10 @@ This document provides comprehensive cross-references to all related repositorie
 ### 🔧 Authentication & SDK Dependencies
 
 #### **OAuth Authentication**
-- **[opencode-openai-codex-auth](https://github.com/numman-ali/opencode-openai-codex-auth)** - OpenAI Codex OAuth authentication plugin
-  - [AGENTS.md](https://github.com/numman-ali/opencode-openai-codex-auth/blob/main/AGENTS.md)
-  - [CROSS_REFERENCES.md](https://github.com/numman-ali/opencode-openai-codex-auth/blob/main/CROSS_REFERENCES.md)
-  - [README.md](https://github.com/numman-ali/opencode-openai-codex-auth/blob/main/README.md)
+- **[open-hax/codex](https://github.com/open-hax/codex)** - OpenAI Codex OAuth authentication plugin
+  - [AGENTS.md](https://github.com/open-hax/codex/blob/main/AGENTS.md)
+  - [CROSS_REFERENCES.md](https://github.com/open-hax/codex/blob/main/CROSS_REFERENCES.md)
+  - [README.md](https://github.com/open-hax/codex/blob/main/README.md)
   - **Integration**: Authentication patterns for full-stack applications
 
 #### **TypeScript SDK Integration**
@@ -77,7 +77,7 @@ This document provides comprehensive cross-references to all related repositorie
 
 ### **TypeScript Backend Integration**
 #### **Fastify Server Development**
-- **Authentication Patterns**: Use [opencode-openai-codex-auth](https://github.com/numman-ali/opencode-openai-codex-auth) patterns
+- **Authentication Patterns**: Use [open-hax/codex](https://github.com/open-hax/codex) patterns
 - **SDK Integration**: Integrate [moofone/codex-ts-sdk](https://github.com/moofone/codex-ts-sdk) for AI capabilities
 - **Agent Enhancement**: Use [promethean](https://github.com/riatzukiza/promethean) agents for backend enhancement
 
@@ -87,7 +87,7 @@ This document provides comprehensive cross-references to all related repositorie
 cd services/agentd && pnpm dev
 
 # Authentication integration
-cd ../opencode-openai-codex-auth && pnpm build
+cd ../open-hax/codex && pnpm build
 # Integrate auth patterns into Fastify server
 
 # SDK integration
@@ -125,14 +125,14 @@ cd ../agent-shell && emacs agent-shell.el
 
 ### **Full-Stack Authentication**
 #### **Cross-Platform Authentication**
-- **OAuth Integration**: Use [opencode-openai-codex-auth](https://github.com/numman-ali/opencode-openai-codex-auth) patterns
+- **OAuth Integration**: Use [open-hax/codex](https://github.com/open-hax/codex) patterns
 - **TypeScript Backend**: Fastify authentication middleware
 - **ClojureScript Frontend**: Authentication state management with atoms
 
 #### **Authentication Development**
 ```bash
 # Authentication pattern integration
-cd ../opencode-openai-codex-auth && pnpm build
+cd ../open-hax/codex && pnpm build
 
 # Backend authentication
 cd services/agentd
@@ -200,7 +200,7 @@ pnpm changelog
 ### **AI-Enhanced Development Workflow**
 1. **SDK Integration**: Use [moofone/codex-ts-sdk](https://github.com/moofone/codex-ts-sdk) for backend AI
 2. **Agent Orchestration**: Use [promethean](https://github.com/riatzukiza/promethean) for AI management
-3. **Authentication**: Use [opencode-openai-codex-auth](https://github.com/numman-ali/opencode-openai-codex-auth) patterns
+3. **Authentication**: Use [open-hax/codex](https://github.com/open-hax/codex) patterns
 4. **Development Tools**: Use [agent-shell](https://github.com/riatzukiza/agent-shell) for development workflow
 5. **Testing**: Comprehensive testing across all integration points
 
@@ -234,7 +234,7 @@ cd ../moofone/codex-ts-sdk && npm run package
 cd ../promethean && pnpm build
 
 # Authentication integration
-cd ../opencode-openai-codex-auth && pnpm build
+cd ../open-hax/codex && pnpm build
 
 # Development tools
 cd ../agent-shell && emacs agent-shell.el
@@ -259,7 +259,7 @@ cd ../moofone/codex-ts-sdk && npm test --integration
 - **Full-stack TypeScript?** → Backend services + [moofone/codex-ts-sdk](https://github.com/moofone/codex-ts-sdk)
 - **ClojureScript frontend?** → Reagent components + [clojure-mcp](https://github.com/bhauman/clojure-mcp) patterns
 - **AI integration?** → [promethean](https://github.com/riatzukiza/promethean) + [moofone/codex-ts-sdk](https://github.com/moofone/codex-ts-sdk)
-- **Authentication?** → [opencode-openai-codex-auth](https://github.com/numman-ali/opencode-openai-codex-auth) patterns
+- **Authentication?** → [open-hax/codex](https://github.com/open-hax/codex) patterns
 - **Package distribution?** → [opencode-hub](https://github.com/riatzukiza/devel/tree/main/opencode-hub)
 
 ### **Integration Complexity**
